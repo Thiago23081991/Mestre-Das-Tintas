@@ -126,7 +126,6 @@ export default function App() {
     setGameResult(result);
     
     // Save data to Supabase asynchronously
-    // We don't await here to not block the UI transition
     dataService.saveGameSession(user, result);
     
     // Add a small delay so user can see the last message/points
@@ -153,7 +152,9 @@ export default function App() {
 
       // Logic to update Score and Mistakes based on AI evaluation
       if (response.evaluation) {
-        const pointsAwarded = response.evaluation.points || 0;
+        // Ensure points are a number
+        const rawPoints = response.evaluation.points;
+        const pointsAwarded = typeof rawPoints === 'number' ? rawPoints : 0;
         const isCorrect = response.evaluation.correct === true;
 
         if (isCorrect && pointsAwarded > 0) {
